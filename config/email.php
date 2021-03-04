@@ -6,4 +6,5 @@ return [
     'port' => '994',
     'user' => '',
     'pass' => '',
+    'notify' => '',
 ];

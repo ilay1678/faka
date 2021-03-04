@@ -174,6 +174,8 @@ class OrderService implements OrderServiceInterface
                 $order->status = 1;
                 $order->pay_date = $date;
 
+                $siteConfig = Bridge::getConfig('site');
+                $emailConfig = Bridge::getConfig('email');
                 //判断自动发货
                 if ($commodity->card_type == 0) {
                     //取出对应的密钥
@@ -187,17 +189,16 @@ class OrderService implements OrderServiceInterface
                     $card->save();
                     $order->commodity = $card->card;
                     $order->send = 1;
-
                     //发送邮件
                     if ($commodity->email_notification == 1 && $commodity->card_type == 0 && $commodity->contact == 2) {
-                        $siteConfig = Bridge::getConfig('site');
-                        $emailConfig = Bridge::getConfig('email');
-                        EmailUtil::send($emailConfig, $siteConfig['title'], $order->commodity, $commodity->name, $order->contact);
+                        EmailUtil::send($emailConfig, $siteConfig['title'], $order->trade_no, $order->commodity, $commodity->name, $order->contact);
                     }
                 } else {
+                    $order->send = 0;
                     $user = Bridge::getConfig('user');
                     $message = ($commodity->delivery_message != null && $commodity->delivery_message != "") ? $commodity->delivery_message : '正在发货中，请耐心等待，如有疑问，请联系客服QQ：' . $user['qq'];
                     $order->commodity = $message;
+                    EmailUtil::send($emailConfig, $siteConfig['title'], $order->trade_no,$order->commodity, $commodity->name, $order->contact);
                 }
             } else {
                 //支付类
@@ -392,6 +393,12 @@ class OrderService implements OrderServiceInterface
                 //手动发货
                 $message = ($shop->delivery_message != null && $shop->delivery_message != "") ? $shop->delivery_message : '正在发货中，请耐心等待，如有疑问，请联系客服QQ：' . $user['qq'];
                 $order->commodity = $message;
+                $order->send = 0;
+                $siteConfig = Bridge::getConfig('site');
+                $emailConfig = Bridge::getConfig('email');
+                if($emailConfig['notify']!=''){
+                    EmailUtil::send($emailConfig, $siteConfig['title'], $order->trade_no,"等待您处理","有订单待处理", $emailConfig['notify']);
+                }
             }
 
             $order->save();
@@ -401,10 +408,10 @@ class OrderService implements OrderServiceInterface
         //获取商品
         $shop = $order->shop;
         //检测是否需要发邮件
-        if ($shop->email_notification == 1 && $shop->card_type == 0 && $shop->contact == 2) {
+        if ($shop->email_notification == 1 && $shop->contact == 2) {
             $siteConfig = Bridge::getConfig('site');
             $emailConfig = Bridge::getConfig('email');
-            EmailUtil::send($emailConfig, $siteConfig['title'], $order->commodity, $shop->name, $order->contact);
+            EmailUtil::send($emailConfig, $siteConfig['title'], $order->trade_no,$order->commodity, $shop->name, $order->contact);
         }
 
         return $callback['return'];

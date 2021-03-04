@@ -32,10 +32,15 @@
 
                             <div class="form-group">
                                 <label>密码</label>
-                                <input type="text" name="pass" class="form-control" value="#{$email.pass}"
+                                <input type="password" name="pass" class="form-control" value="#{$email.pass}"
                                        placeholder="请输入密码">
                             </div>
 
+                            <div class="form-group">
+                                <label>手动发货提醒邮箱</label>
+                                <input type="text" name="notify" class="form-control" value="#{$email.notify}"
+                                       placeholder="手动发货提醒邮箱">
+                            </div>
                             <button type="button" class="btn btn-primary edit">立即修改</button>
                         </form>
                     </div>

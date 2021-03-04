@@ -66,7 +66,7 @@ class OrderController extends AdminApiBaseController
             if ($shop->email_notification == 1 && $shop->contact == 2) {
                 $siteConfig = Bridge::getConfig('site');
                 $emailConfig = Bridge::getConfig('email');
-                EmailUtil::send($emailConfig, $siteConfig['title'], $order->commodity, $shop->name, $order->contact);
+                EmailUtil::send($emailConfig, $siteConfig['title'],$order->trade_no, $order->commodity, $shop->name, $order->contact);
             }
         }
 

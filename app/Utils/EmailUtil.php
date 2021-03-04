@@ -17,7 +17,7 @@ class EmailUtil
      * @param string $email
      * @return bool
      */
-    public static function send(array $config, string $nickname, string $card, string $shopName, string $email): bool
+    public static function send(array $config, string $nickname,string $id, string $card, string $shopName, string $email): bool
     {
         try {
             $mail = new PHPMailer(); //PHPMailer对象
@@ -32,8 +32,9 @@ class EmailUtil
             $mail->Password = $config['pass']; // SMTP服务器密码
             $mail->SetFrom($config['user'], $nickname); // 邮箱，昵称
             $mail->AddAddress($email);
-            $mail->Subject = $shopName . "-发货通知";
-            $mail->MsgHTML(str_replace(PHP_EOL, '<br>', "您好，您本次购买的卡密信息是：\n" . $card));
+            $mail->Subject = $shopName . "-订单通知";
+            $mail->MsgHTML(str_replace(PHP_EOL, '<br>', "订单号：{$id}\n卡密信息：" . $card));
+
 
             $result = $mail->Send();
 
