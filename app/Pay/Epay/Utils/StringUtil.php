@@ -27,7 +27,6 @@ class StringUtil
                 if ($sign != '') {
                     $sign .= "&";
                 }
-                $val = urldecode($val);
                 $sign .= "$key=$val"; //拼接为url参数形式
             }
         }
